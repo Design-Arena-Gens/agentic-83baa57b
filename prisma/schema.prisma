@@ -1,0 +1,41 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int       @id @default(autoincrement())
+  name         String
+  username     String    @unique
+  passwordHash String
+  role         String
+  createdAt    DateTime  @default(now())
+  patrols      Patrol[]
+}
+
+model Location {
+  id         Int       @id @default(autoincrement())
+  name       String
+  latitude   Float
+  longitude  Float
+  checklist  String     @default("[]")
+  createdAt  DateTime   @default(now())
+  patrols    Patrol[]
+}
+
+model Patrol {
+  id          Int       @id @default(autoincrement())
+  guard       User      @relation(fields: [guardId], references: [id])
+  guardId     Int
+  location    Location  @relation(fields: [locationId], references: [id])
+  locationId  Int
+  latitude    Float
+  longitude   Float
+  timestamp   DateTime  @default(now())
+  responses   String
+  photoBase64 String?
+}
